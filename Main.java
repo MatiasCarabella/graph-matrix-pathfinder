@@ -118,26 +118,39 @@ class Grafo {
         caminoActual.remove(caminoActual.size() - 1);
     }
 
-    // Método para realizar un recorrido BFS
-    public void bfs(int origen) {
+    // Método para realizar un recorrido en preorden desde un nodo dado
+    public void recorridoPreorden(int nodo) {
         boolean[] visitado = new boolean[numVertices];
-        Queue<Integer> cola = new LinkedList<>();
-        visitado[origen] = true;
-        cola.add(origen);
+        System.out.print("Recorrido en preorden desde el nodo " + (nodo + 1) + ": ");
+        recorridoPreordenRec(nodo, visitado);
+        System.out.println();
+    }
 
-        System.out.println("Recorrido BFS desde el vértice " + (origen + 1) + ":");
-        while (!cola.isEmpty()) {
-            int actual = cola.poll();
-            System.out.print((actual + 1) + " ");
-
-            for (int i = 0; i < numVertices; i++) {
-                if (matrizAdyacencia[actual][i] != Integer.MAX_VALUE && !visitado[i]) {
-                    visitado[i] = true;
-                    cola.add(i);
-                }
+    private void recorridoPreordenRec(int nodo, boolean[] visitado) {
+        visitado[nodo] = true;
+        System.out.print((nodo + 1) + " ");
+        for (int i = 0; i < numVertices; i++) {
+            if (matrizAdyacencia[nodo][i] != Integer.MAX_VALUE && !visitado[i]) {
+                recorridoPreordenRec(i, visitado);
             }
         }
-        System.out.println();
+    }
+
+    // Método para calcular la altura del "árbol" desde un nodo dado
+    public int altura(int nodo) {
+        boolean[] visitado = new boolean[numVertices];
+        return alturaRec(nodo, visitado);
+    }
+
+    private int alturaRec(int nodo, boolean[] visitado) {
+        visitado[nodo] = true;
+        int alturaMax = 0;
+        for (int i = 0; i < numVertices; i++) {
+            if (matrizAdyacencia[nodo][i] != Integer.MAX_VALUE && !visitado[i]) {
+                alturaMax = Math.max(alturaMax, alturaRec(i, visitado));
+            }
+        }
+        return alturaMax + 1;
     }
 }
 
@@ -178,7 +191,7 @@ public class Main {
         // Imprimir la matriz de adyacencia
         grafo.imprimirMatrizAdyacencia();
 
-        // Encontrar y mostrar el camino mínimo desde el vértice 0
+        // Encontrar y mostrar el camino mínimo desde el vértice 1 (0)
         grafo.caminoMinimo(0);
 
         // Encontrar y mostrar los ciclos en el grafo
@@ -194,7 +207,11 @@ public class Main {
             System.out.println();
         }
 
-        // Realizar un recorrido BFS desde el vértice 0
-        grafo.bfs(0);
+        // Realizar un recorrido en preorden desde el vértice 1 (0)
+        grafo.recorridoPreorden(0);
+
+        // Calcular y mostrar la altura del "árbol" desde el vértice 1 (0)
+        int altura = grafo.altura(0);
+        System.out.println("Altura del árbol desde el vértice 1: " + altura);
     }
 }
