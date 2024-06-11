@@ -81,20 +81,20 @@ class Grafo {
         }
     }
 
-    // Método para determinar si hay ciclos utilizando DFS
-    public List<List<Integer>> encontrarCiclos() {
-        List<List<Integer>> ciclos = new ArrayList<>();
+    // Método para determinar si hay ciclos utilizando Depth First Search (DFS)
+    public List < List < Integer >> encontrarCiclos() {
+        List < List < Integer >> ciclos = new ArrayList < > ();
         boolean[] visitado = new boolean[numVertices];
         for (int i = 0; i < numVertices; i++) {
             if (!visitado[i]) {
-                List<Integer> caminoActual = new ArrayList<>();
+                List < Integer > caminoActual = new ArrayList < > ();
                 dfsEncontrarCiclos(i, visitado, new boolean[numVertices], caminoActual, ciclos);
             }
         }
         return ciclos;
     }
 
-    private void dfsEncontrarCiclos(int v, boolean[] visitado, boolean[] enCamino, List<Integer> caminoActual, List<List<Integer>> ciclos) {
+    private void dfsEncontrarCiclos(int v, boolean[] visitado, boolean[] enCamino, List < Integer > caminoActual, List < List < Integer >> ciclos) {
         visitado[v] = true;
         enCamino[v] = true;
         caminoActual.add(v);
@@ -102,7 +102,7 @@ class Grafo {
         for (int i = 0; i < numVertices; i++) {
             if (matrizAdyacencia[v][i] != Integer.MAX_VALUE) {
                 if (enCamino[i]) {
-                    List<Integer> ciclo = new ArrayList<>();
+                    List < Integer > ciclo = new ArrayList < > ();
                     int inicio = caminoActual.indexOf(i);
                     for (int j = inicio; j < caminoActual.size(); j++) {
                         ciclo.add(caminoActual.get(j));
@@ -116,6 +116,23 @@ class Grafo {
 
         enCamino[v] = false;
         caminoActual.remove(caminoActual.size() - 1);
+    }
+
+    // Método para calcular la altura del "árbol" desde un nodo dado
+    public int altura(int nodo) {
+        boolean[] visitado = new boolean[numVertices];
+        return alturaRec(nodo, visitado);
+    }
+
+    private int alturaRec(int nodo, boolean[] visitado) {
+        visitado[nodo] = true;
+        int alturaMax = 0;
+        for (int i = 0; i < numVertices; i++) {
+            if (matrizAdyacencia[nodo][i] != Integer.MAX_VALUE && !visitado[i]) {
+                alturaMax = Math.max(alturaMax, alturaRec(i, visitado));
+            }
+        }
+        return alturaMax + 1;
     }
 
     // Método para realizar un recorrido en preorden desde un nodo dado
@@ -136,21 +153,53 @@ class Grafo {
         }
     }
 
-    // Método para calcular la altura del "árbol" desde un nodo dado
-    public int altura(int nodo) {
+    // Método para encontrar el camino más corto entre dos vértices usando Dijkstra
+    public void caminoMasCortoDijkstra(int origen, int destino) {
+        int[] distancias = new int[numVertices];
         boolean[] visitado = new boolean[numVertices];
-        return alturaRec(nodo, visitado);
-    }
+        int[] predecesor = new int[numVertices];
+        Arrays.fill(distancias, Integer.MAX_VALUE);
+        Arrays.fill(predecesor, -1);
+        distancias[origen] = 0;
 
-    private int alturaRec(int nodo, boolean[] visitado) {
-        visitado[nodo] = true;
-        int alturaMax = 0;
-        for (int i = 0; i < numVertices; i++) {
-            if (matrizAdyacencia[nodo][i] != Integer.MAX_VALUE && !visitado[i]) {
-                alturaMax = Math.max(alturaMax, alturaRec(i, visitado));
+        PriorityQueue<Integer> pq = new PriorityQueue<>(Comparator.comparingInt(v -> distancias[v]));
+        pq.add(origen);
+
+        while (!pq.isEmpty()) {
+            int u = pq.poll();
+            if (visitado[u]) continue;
+            visitado[u] = true;
+
+            for (int v = 0; v < numVertices; v++) {
+                if (matrizAdyacencia[u][v] != Integer.MAX_VALUE && !visitado[v]) {
+                    int nuevaDistancia = distancias[u] + matrizAdyacencia[u][v];
+                    if (nuevaDistancia < distancias[v]) {
+                        distancias[v] = nuevaDistancia;
+                        predecesor[v] = u;
+                        pq.add(v);
+                    }
+                }
             }
         }
-        return alturaMax + 1;
+
+        // Imprimir el camino más corto y su distancia
+        if (distancias[destino] == Integer.MAX_VALUE) {
+            System.out.println("No hay camino desde el vértice " + (origen + 1) + " al vértice " + (destino + 1));
+        } else {
+            System.out.println("Camino más corto (Dijkstra) desde el vértice " + (origen + 1) + " al vértice " + (destino + 1) + ":");
+            List<Integer> camino = new ArrayList<>();
+            for (int v = destino; v != -1; v = predecesor[v]) {
+                camino.add(v);
+            }
+            Collections.reverse(camino);
+            for (int i = 0; i < camino.size(); i++) {
+                System.out.print((camino.get(i) + 1));
+                if (i < camino.size() - 1) {
+                    System.out.print(" -> ");
+                }
+            }
+            System.out.println("\nDistancia total: " + distancias[destino]);
+        }
     }
 }
 
@@ -190,14 +239,16 @@ public class Main {
 
         // Imprimir la matriz de adyacencia
         grafo.imprimirMatrizAdyacencia();
+        System.out.println();
 
         // Encontrar y mostrar el camino mínimo desde el vértice 1 (0)
         grafo.caminoMinimo(0);
+        System.out.println();
 
         // Encontrar y mostrar los ciclos en el grafo
-        List<List<Integer>> ciclos = grafo.encontrarCiclos();
+        List < List < Integer >> ciclos = grafo.encontrarCiclos();
         System.out.println("Ciclos encontrados:");
-        for (List<Integer> ciclo : ciclos) {
+        for (List < Integer > ciclo: ciclos) {
             for (int i = 0; i < ciclo.size(); i++) {
                 System.out.print((ciclo.get(i) + 1));
                 if (i < ciclo.size() - 1) {
@@ -206,12 +257,19 @@ public class Main {
             }
             System.out.println();
         }
-
-        // Realizar un recorrido en preorden desde el vértice 1 (0)
-        grafo.recorridoPreorden(0);
+        System.out.println();
 
         // Calcular y mostrar la altura del "árbol" desde el vértice 1 (0)
         int altura = grafo.altura(0);
         System.out.println("Altura del árbol desde el vértice 1: " + altura);
+        System.out.println();
+
+        // Realizar un recorrido en preorden desde el vértice 1 (0)
+        grafo.recorridoPreorden(0);
+        System.out.println();
+
+        // Encontrar y mostrar el camino más corto entre el vértice 1 (0) y el vértice 3 (2) usando Dijkstra
+        grafo.caminoMasCortoDijkstra(0, 2);
+        System.out.println();
     }
 }
