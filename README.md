@@ -46,7 +46,7 @@ grafo.caminoMasCortoDijkstra(0, 2); // Find shortest path from vertex 1 to 3
 List<List<Integer>> ciclos = grafo.encontrarCiclos();
 ```
 
-## Output Examples
+## Output
 
 The program provides detailed output for all operations:
 - Adjacency matrix visualization
@@ -58,7 +58,6 @@ The program provides detailed output for all operations:
 ## Requirements
 
 - Java Development Kit (JDK) 8 or higher
-- No additional dependencies required
 
 ## Building and Running
 
@@ -71,14 +70,6 @@ javac Main.java
 ```bash
 java Main
 ```
-
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
 
 ## License
 
