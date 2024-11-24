@@ -1,6 +1,6 @@
 # Graph Matrix Implementation
 
-A Java implementation of graph data structures and algorithms using adjacency matrices. This project provides a comprehensive set of tools for graph manipulation and analysis, including multiple pathfinding algorithms and cycle detection.
+Java implementation of graph data structures and algorithms using adjacency matrices. This project provides a set of tools for graph manipulation and analysis, including multiple pathfinding algorithms and cycle detection.
 
 ## Features
 
